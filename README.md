@@ -25,3 +25,11 @@ Make sure to activate the virtual environment.
 ```
 python -m backend.app
 ```
+
+**Run a peer instance**
+
+Make sure to activate the virtual environment.
+
+```
+$env:PEER="True"; python -m backend.app
+```
