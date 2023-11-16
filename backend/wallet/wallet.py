@@ -17,7 +17,7 @@ class Wallet:
         self.address = str(uuid.uuid4())[0:8]
         self.balance = STARTING_BALANCE
         self.private_key = ec.generate_private_key(ec.SECP256K1(), default_backend())
-        self.pubic_key = self.private_key.public_key()
+        self.public_key = self.private_key.public_key()
 
     def sign(self, data):
         """
@@ -49,10 +49,10 @@ def main():
 
     print(f'signature: {signature}')
 
-    should_be_valid = Wallet.verify(wallet.pubic_key, data, signature)
+    should_be_valid = Wallet.verify(wallet.public_key, data, signature)
     print(f'should be valid: {should_be_valid}')
 
-    should_be_invalid = Wallet.verify(Wallet().pubic_key, data, signature)
+    should_be_invalid = Wallet.verify(Wallet().public_key, data, signature)
     print(f'Should be invalid: {should_be_invalid}')
 
 if __name__ == '__main__':
