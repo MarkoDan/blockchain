@@ -30,17 +30,23 @@ class Wallet:
         """
         Reset the public key to its serialized version.
         """
-        self.public_key_bytes = self.public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
-
-        print(f'\nself.public_key_bytes: {self.public_key_bytes}')
-
+        self.public_key = self.public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).decode('utf-8')
+    
     @staticmethod
     def verify(public_key, data, signature):
         """
         Varify the signature based on the original public key and data.
         """
+        deserialize_public_key = serialization.load_pem_public_key(
+            public_key.encode('utf-8'),
+            default_backend()
+        )
+
         try:
-            public_key.verify(signature, json.dumps(data).encode('utf-8'), ec.ECDSA(hashes.SHA256()))
+            deserialize_public_key.verify(signature, json.dumps(data).encode('utf-8'), ec.ECDSA(hashes.SHA256()))
         
             return True
         
@@ -50,18 +56,17 @@ class Wallet:
 
 def main():
     wallet = Wallet()
-    print(f'Wallet.__dict__: {wallet.__dict__}')
+    print(f'wallet.__dict__: {wallet.__dict__}')
 
-    data = {'foo': 'bar'}
+    data = { 'foo': 'bar' }
     signature = wallet.sign(data)
-
     print(f'signature: {signature}')
 
     should_be_valid = Wallet.verify(wallet.public_key, data, signature)
-    print(f'should be valid: {should_be_valid}')
+    print(f'should_be_valid: {should_be_valid}')
 
     should_be_invalid = Wallet.verify(Wallet().public_key, data, signature)
-    print(f'Should be invalid: {should_be_invalid}')
-
+    print(f'should_be_invalid: {should_be_invalid}')
+    
 if __name__ == '__main__':
     main()
